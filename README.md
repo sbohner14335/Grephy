@@ -1,2 +1,2 @@
 # Grephy
-A variation of the grep utility
+A variation of the grep utility in Java.
