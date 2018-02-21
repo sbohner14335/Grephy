@@ -6,17 +6,22 @@ public class Grephy {
 	
 	public static void main(String[] args) {
 		// Reading user input.
-		Scanner input = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 		// Introduction
-		System.out.println("Welcome to Grephy, a variation of the grep utility!\n" + "Type \"help\" for a list of commands");
+		System.out.println("Welcome to Grephy, a variation of the grep utility!\n\n" + "Type \"help\" for well ... help :)");
 		
-		if (input.hasNext()) {
+		while (scanner.hasNext()) {
 			// Read the command the user issued.
-			String line = input.nextLine();
+			String line = scanner.nextLine().toLowerCase();
 			// Determine action after receiving user input.
 			switch (line) {
 				case "help":  //TODO Create a help method;
 				  			  break;
+				case "grep":  ReadFile file = new ReadFile();
+							  file.openFile();
+							  file.readFile();
+							  file.closeFile();
+							  break;
 				default: System.out.println("Invalid command, type \"help\" for a list of commands.");
 			}
 		}
