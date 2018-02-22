@@ -14,15 +14,30 @@ public class Grephy {
 			// Read the command the user issued.
 			String line = scanner.nextLine().toLowerCase();
 			// Determine action after receiving user input.
-			switch (line) {
-				case "help":  //TODO Create a help method;
-				  			  break;
-				case "grep":  ReadFile file = new ReadFile();
-							  file.openFile();
-							  file.readFile();
-							  file.closeFile();
-							  break;
-				default: System.out.println("Invalid command, type \"help\" for a list of commands.");
+			if (line.startsWith("grep ")) {
+				// Check if the user wants to use NFA.
+				String[] splited = line.split("\\s+");
+				// Ensure the user entered 3 arguments after the grep command.
+				if (splited.length == 4) {
+					if (splited[1].equals("-n") || splited[1].equals("-d")) {
+						// TODO: Check for REGEX then...
+						ReadFile file = new ReadFile();
+						file.readFile(splited[3]);
+						// Check if the user want to use NFA.
+						if (splited[1] == "-n") {
+							System.out.println("NFA");
+						// Check if the user want to use DFA.
+						} else if (splited[1] == "-d") {
+							System.out.println("DFA");
+						}
+					} else {
+						System.out.println("Not a valid automata type.");
+					}
+				} else {
+					System.out.println("Invalid command: not enough arguments, please use the format \"grep [-n NFA-file][-d DFA-file] REGEX file.txt\"");
+				}
+			} else {
+				System.out.println("Invalid command: please use the format \"grep [-n NFA-file][-d DFA-file] REGEX file.txt\"");
 			}
 		}
 	}

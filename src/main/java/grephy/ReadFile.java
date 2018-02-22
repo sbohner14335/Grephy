@@ -8,23 +8,25 @@ public class ReadFile {
 	private Scanner fileScanner;
 	
 	// Responsible for handling the opening of a specified file.
-	public void openFile() {
+	public void openFile(String file) {
 		try {
-			fileScanner = new Scanner(new File("src/test/resources/test1.txt"));
+			fileScanner = new Scanner(new File("src/test/resources/" + file));
 		} catch (Exception e) {
 			System.out.println("File not found.");
 		}
 	}
+	// Closes the file scanner.
+	public void closeFile() {
+		fileScanner.close();
+	}
 	// Reads each line of the given file.
-	public void readFile() {
+	public void readFile(String file) {
+		openFile(file);
 		while (fileScanner.hasNext()) {
 			String line = fileScanner.nextLine();
 			System.out.println(line);
 		}
-	}
-	
-	public void closeFile() {
-		fileScanner.close();
+		closeFile();
 	}
 
 }
