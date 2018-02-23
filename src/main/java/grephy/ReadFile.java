@@ -12,7 +12,8 @@ public class ReadFile {
 		try {
 			fileScanner = new Scanner(new File("src/test/resources/" + file));
 		} catch (Exception e) {
-			System.out.println("File not found.");
+			System.out.println("File " + "\"" + file + "\"" + " not found.");
+			Grephy.init();
 		}
 	}
 	// Closes the file scanner.
