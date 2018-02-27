@@ -17,25 +17,20 @@ public class Grephy {
 		
 		while (scanner.hasNext()) {
 			// Read the command the user issued.
-			String line = scanner.nextLine().toLowerCase();
+			String line = scanner.nextLine();
 			// Determine action after receiving user input.
-			if (line.startsWith("grep ")) {
-				// Check if the user wants to use NFA.
+			if (line.toLowerCase().startsWith("grep ")) {
+				// Set variables for the command by splitting commands on whitespace into an array.
 				String[] splited = line.split("\\s+");
+				String automata = splited[1];
+				String regex = splited[2];
+				String fileName = splited[3];
 				// Ensure the user entered 3 arguments after the grep command.
 				if (splited.length == 4) {
 					// Verify which automata is being specified, either NFA or DFA.
-					if (splited[1].equals("-n") || splited[1].equals("-d")) {
-						// TODO: Check for REGEX then...
-						ReadFile file = new ReadFile();
-						file.readFile(splited[3]);
-						// Check if the user want to use NFA.
-						if (splited[1] == "-n") {
-							System.out.println("NFA");
-						// Check if the user want to use DFA.
-						} else if (splited[1] == "-d") {
-							System.out.println("DFA");
-						}
+					if (automata.toLowerCase().equals("-n") || automata.toLowerCase().equals("-d")) {
+						RegexReader file = new RegexReader(regex, automata);
+						file.readFile(fileName);
 					} else {
 						System.out.println("\"" + splited[1] + "\"" + " is not a valid automata type.\nUse -n for NFA and -d for DFA.");
 					}
