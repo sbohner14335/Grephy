@@ -10,29 +10,7 @@ public class RegexReader {
 	// Reads each line of the given file, checks the characters from the regular expression and .
 	public void readFile(String file, String regex) {
 		openFile(file);
-		Boolean charFound = false;
-		while (fileScanner.hasNext()) {
-			String line = fileScanner.nextLine();
-			// Get all REGEX characters that are not parens or star.
-			String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
-			// Loop through each character of the regex.
-			for (int i = 0; i < regexChars.length(); i++) {
-				// Determine if each character is contained within the string.
-				String character = regexChars.substring(i, i+1);
-				if (line.contains(character)) {
-					charFound = true;
-					break;  // Once we find one character we do not have to check the other characters.
-				}
-			}
-			// If no characters matched with any of the file lines, the regular expression automatically fails.
-			if (!charFound) {
-				System.out.println("The characters in " + regex + " are not in " + file);
-				Grephy.init();
-			} else {
-				// TODO: Logic for validating each line of the file. (REGEX -> NFA -> DFA -> test by line)
-				System.out.println(line);
-			}
-		}
+		validateLines(file, regex);
 		closeFile();
 	}
 	// Responsible for handling the opening of a specified file.
@@ -43,6 +21,31 @@ public class RegexReader {
 			// If the file is not found, let the user know and restart.
 			System.out.println("File " + "\"" + file + "\"" + " not found.");
 			Grephy.init();
+		}
+	}
+	// Ensures that at least of the characters from the regex is on the line we are about to test.
+	public void validateLines(String file, String regex) {
+		Boolean charFound = false;  // If a character is found on a line, this becomes true.
+		while (fileScanner.hasNext()) {
+			String line = fileScanner.nextLine();
+			// Get all REGEX characters that are not parens, + or kleene star.
+			String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
+			// Loop through each character of the regex.
+			for (int i = 0; i < regexChars.length(); i++) {
+				// Determine if each character is contained within the line.
+				String character = regexChars.substring(i, i+1);
+				if (line.contains(character)) {
+					charFound = true;
+					break;
+				} else {
+					charFound = false;
+				}
+			}
+			// If no characters matched on a given line, we do not have to test that line.
+			if (charFound) {
+				// TODO: Logic for validating each line of the file. (REGEX -> NFA -> DFA -> test by line)
+				System.out.println(line);
+			}
 		}
 	}
 	// Constructs an NFA from a given regular expression.
