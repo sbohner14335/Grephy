@@ -6,21 +6,32 @@ import java.util.*;
 public class RegexReader {
 	// Scanner created for reading a file.
 	private Scanner fileScanner;
-	String automata;
 	
-	// Constructor created for the regex and automata type.
-	public RegexReader(String a) {
-		this.automata = a;
-	}
-	
-	// Reads each line of the given file.
+	// Reads each line of the given file, checks the characters from the regular expression and .
 	public void readFile(String file, String regex) {
 		openFile(file);
-		ingestRegex(regex); // Regex -> NFA
+		Boolean charFound = false;
 		while (fileScanner.hasNext()) {
 			String line = fileScanner.nextLine();
-			System.out.println(line);
-			// TODO: Logic for validating each line of the file. (REGEX -> NFA -> DFA -> test by line)
+			// Get all REGEX characters that are not parens or star.
+			String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
+			// Loop through each character of the regex.
+			for (int i = 0; i < regexChars.length(); i++) {
+				// Determine if each character is contained within the string.
+				String character = regexChars.substring(i, i+1);
+				if (line.contains(character)) {
+					charFound = true;
+					break;  // Once we find one character we do not have to check the other characters.
+				}
+			}
+			// If no characters matched with any of the file lines, the regular expression automatically fails.
+			if (!charFound) {
+				System.out.println("The characters in " + regex + " are not in " + file);
+				Grephy.init();
+			} else {
+				// TODO: Logic for validating each line of the file. (REGEX -> NFA -> DFA -> test by line)
+				System.out.println(line);
+			}
 		}
 		closeFile();
 	}
@@ -40,15 +51,19 @@ public class RegexReader {
 		Boolean openParens = false;
 		String betweenParens = "";
 		String prevChar; // Used to store the previous character.
+		String nextChar = "";
 		for (int i = 1; i < regex.length()+1; i++) {
 			String currChar = regex.substring(i-1, i);
-			String nextChar = regex.substring(i, i+1); // This is out of bounds on the last character.
+			if (i != regex.length()) {
+				nextChar = regex.substring(i, i+1); // This is out of bounds on the last character.
+			}
+			
 			System.out.println("Current- " + currChar + "  Next- " + nextChar);
 			
 			if (currChar.equals(")")) {
-				ingestRegex(betweenParens);
 				betweenParens = "";
 				openParens = false;
+				ingestRegex(betweenParens);
 			}
 			// Logic for determining whether we are inside parenthesis.
 			if (openParens) {
@@ -63,10 +78,6 @@ public class RegexReader {
 			}
 			prevChar = currChar;
 		}
-	}
-	
-	public void ingestSplat(String string) {
-		
 	}
 	// Closes the file scanner.
 	public void closeFile() {
