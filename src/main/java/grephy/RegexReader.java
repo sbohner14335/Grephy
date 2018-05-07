@@ -23,68 +23,39 @@ public class RegexReader {
 			Grephy.init();
 		}
 	}
-	// Ensures that at least of the characters from the regex is on the line we are about to test.
-	public void validateLines(String file, String regex) {
-		Boolean charFound = false;  // If a character is found on a line, this becomes true.
-		while (fileScanner.hasNext()) {
-			String line = fileScanner.nextLine();
-			// Get all REGEX characters that are not parens, + or kleene star.
-			String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
-			// Loop through each character of the regex.
-			for (int i = 0; i < regexChars.length(); i++) {
-				// Determine if each character is contained within the line.
-				String character = regexChars.substring(i, i+1);
-				if (line.contains(character)) {
-					charFound = true;
-					break;
-				} else {
-					charFound = false;
-				}
-			}
-			// If no characters matched on a given line, we do not have to test that line.
-			if (charFound) {
-				// TODO: Logic for validating each line of the file. (REGEX -> NFA -> DFA -> test by line)
-				System.out.println(line);
-			}
-		}
-	}
-	// Constructs an NFA from a given regular expression.
-	public void ingestRegex(String regex) {
-		// Loop through the regex string and interpret each character.
-		Boolean openParens = false;
-		String betweenParens = "";
-		String prevChar; // Used to store the previous character.
-		String nextChar = "";
-		for (int i = 1; i < regex.length()+1; i++) {
-			String currChar = regex.substring(i-1, i);
-			if (i != regex.length()) {
-				nextChar = regex.substring(i, i+1); // This is out of bounds on the last character.
-			}
-			
-			System.out.println("Current- " + currChar + "  Next- " + nextChar);
-			
-			if (currChar.equals(")")) {
-				betweenParens = "";
-				openParens = false;
-				ingestRegex(betweenParens);
-			}
-			// Logic for determining whether we are inside parenthesis.
-			if (openParens) {
-				betweenParens += currChar;  // Continue to build the string inside of the parens.
-			// Check if the next character is an open parens
-			} else if (currChar.equals("(")) {
-				openParens = true;
-			} else if (currChar.equals("*")) {
-				// TODO: Pass last character as argument.
-			} else if (currChar.equals("+")) {
-				
-			}
-			prevChar = currChar;
-		}
-	}
 	// Closes the file scanner.
 	public void closeFile() {
 		fileScanner.close();
 	}
-
+	// Ensures that at least of the characters from the regex is on the line we are about to test.
+	public void validateLines(String file, String regex) {
+		if (fileScanner.hasNext()) {
+			NFA nfa = new NFA(regex);  // If the file has contents, create an NFA for the regular expression.
+			// If a character is found on a line, this becomes true.
+			Boolean charFound = false;
+			while (fileScanner.hasNext()) {
+				String line = fileScanner.nextLine();
+				// Get all REGEX characters that are not parens, + or kleene star.
+				String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
+				// Loop through each character of the regex.
+				for (int i = 0; i < regexChars.length(); i++) {
+					// Determine if each character is contained within the line.
+					String character = regexChars.substring(i, i+1);
+					if (line.contains(character)) {
+						// If the character is found, we can test that line.
+						charFound = true;
+						break;
+					} else {
+						charFound = false;
+					}
+				}
+				// If characters matched on a given line, test that line.
+				if (charFound) {
+					nfa.testLine(line);
+				}
+			}
+		} else {
+			System.out.println("There is no content in this file to match.");
+		}
+	}
 }
