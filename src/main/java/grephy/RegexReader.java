@@ -31,6 +31,8 @@ public class RegexReader {
 	public void validateLines(String file, String regex) {
 		if (fileScanner.hasNext()) {
 			NFA nfa = new NFA(regex);  // If the file has contents, create an NFA for the regular expression.
+			// Use this NFA to create a DFA.
+			DFA dfa = new DFA(nfa.states, nfa.alphabet, nfa.delta, nfa.acceptedStates);
 			// If a character is found on a line, this becomes true.
 			Boolean charFound = false;
 			while (fileScanner.hasNext()) {
@@ -51,7 +53,10 @@ public class RegexReader {
 				}
 				// If characters matched on a given line, test that line.
 				if (charFound) {
-					// TODO: Test the line utilizing a test method (DFA).
+					// Test the line utilizing a test method (DFA).
+					if (dfa.testLine(line)) {
+						System.out.println(line);
+					}
 				}
 			}
 		} else {

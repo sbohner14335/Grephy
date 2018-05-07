@@ -56,6 +56,12 @@ public class NFA {
 				    HashMap<String, Integer> transition = new HashMap<String, Integer>();
 				    // Create a transition for this character to the next state and add the new transition to the delta function array list.
 					transition.put(currChar, currState);
+					// Assigns null (empty string) to all transitions that are undefined, as per an NFA.
+					for (int j = 0; j < this.alphabet.size(); j++) {
+						if (!transition.containsKey(this.alphabet.get(j))) {
+							transition.put(this.alphabet.get(j), null);
+						}
+					}
 					this.delta.add(transition);
 					// Clear the accepted states and add the most recent state created an accepted state.
 					this.acceptedStates.clear();
@@ -64,9 +70,6 @@ public class NFA {
 			}
 			prevChar = currChar;
 		}
-		System.out.println(this.states);
-		System.out.println(this.acceptedStates);
-		System.out.println(this.delta);
 	}
 	
 	// Learn the alphabet from a given regular expression.
