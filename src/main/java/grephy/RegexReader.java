@@ -51,7 +51,7 @@ public class RegexReader {
 				}
 				// If characters matched on a given line, test that line.
 				if (charFound) {
-					nfa.testLine(line);
+					// TODO: Test the line utilizing a test method (DFA).
 				}
 			}
 		} else {
