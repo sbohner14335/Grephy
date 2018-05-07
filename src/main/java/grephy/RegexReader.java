@@ -5,14 +5,20 @@ import java.util.*;
 
 public class RegexReader {
 	// Scanner created for reading a file.
-	private Scanner fileScanner;
+	Scanner fileScanner;
+	String automata;
 	
+	public RegexReader(String automata) {
+		this.automata = automata;
+	}
+
 	// Reads each line of the given file, checks the characters from the regular expression and .
 	public void readFile(String file, String regex) {
 		openFile(file);
 		validateLines(file, regex);
 		closeFile();
 	}
+	
 	// Responsible for handling the opening of a specified file.
 	public void openFile(String file) {
 		try {
@@ -23,16 +29,28 @@ public class RegexReader {
 			Grephy.init();
 		}
 	}
+	
 	// Closes the file scanner.
 	public void closeFile() {
 		fileScanner.close();
 	}
+	
+	// Output NFA / DFA in DOT format.
+	public void dotOutput(String automata) {
+		if (automata == "-n") {
+			// Print NFA to output file
+		} else if (automata == "-d") {
+			// Print DFA to output file.
+		}
+	}
+	
 	// Ensures that at least of the characters from the regex is on the line we are about to test.
 	public void validateLines(String file, String regex) {
 		if (fileScanner.hasNext()) {
 			NFA nfa = new NFA(regex);  // If the file has contents, create an NFA for the regular expression.
 			// Use this NFA to create a DFA.
 			DFA dfa = new DFA(nfa.states, nfa.alphabet, nfa.delta, nfa.acceptedStates);
+			dotOutput(this.automata);
 			// If a character is found on a line, this becomes true.
 			Boolean charFound = false;
 			while (fileScanner.hasNext()) {
@@ -60,7 +78,7 @@ public class RegexReader {
 				}
 			}
 		} else {
-			System.out.println("There is no content in this file to match.");
+			System.out.println("There is no content in this file to test.");
 		}
 	}
 }

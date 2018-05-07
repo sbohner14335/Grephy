@@ -27,7 +27,6 @@ public class DFA {
 				}
 			}
 		}
-		System.out.println(this.delta);
 	}
 	
 	// TODO: Test method

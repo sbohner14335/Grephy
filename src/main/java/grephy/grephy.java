@@ -6,7 +6,7 @@ public class Grephy {
 	
 	public static void main(String[] args) {
 		// Introduction
-		System.out.println("Welcome to Grephy, a variation of the grep utility!\n\n" + "Use the format \"grep REGEX file.txt\"\nAlso, please ensure that there is no white space within your regular expression. :)");
+		System.out.println("Welcome to Grephy, a variation of the grep utility!\n\n" + "Use the format \"grep [-n NFA-file][-d DFA-file] REGEX file.txt\" where [-n NFA-file][-d DFA-file] are optional parameters.\nAlso, please ensure that there is no white space within your regular expression. :)");
 		init();
 	}
 	
@@ -23,18 +23,28 @@ public class Grephy {
 				// Set variables for the command by splitting commands on whitespace into an array.
 				String[] splited = line.split("\\s+");
 				// Ensure the user entered 3 arguments after the grep command.
-				if (splited.length == 3) {
-					// Set variables from the array.
+				if (splited.length == 4) {
+					String automata = splited[1];
+					String regex = splited[2];
+					String fileName = splited[3];
+					// Verify which automata is being specified, either NFA or DFA.
+					if (automata.toLowerCase().equals("-n") || automata.toLowerCase().equals("-d")) {
+						// Create an instantiation of the RegexReader object, passing through the filename, expression and the automata type specified.
+						RegexReader reader = new RegexReader(automata);
+						reader.readFile(fileName, regex);
+					} else {
+						System.out.println("\"" + automata + "\"" + " is not a valid automata type.\nUse -n for NFA and -d for DFA.");
+					}
+				} else if (splited.length == 3) {
 					String regex = splited[1];
 					String fileName = splited[2];
-					// Create an instantiation of the RegexReader object, passing through the expression.
-					RegexReader reader = new RegexReader();
+					RegexReader reader = new RegexReader(null);
 					reader.readFile(fileName, regex);
 				} else {
-					System.out.println("Invalid command: not enough arguments, please use the format \"grep REGEX file.txt\"");
+					System.out.println("Invalid command: not enough arguments, please use the format \"grep [-n NFA-file][-d DFA-file] REGEX file.txt\"");
 				}
 			} else {
-				System.out.println("Invalid command: please use the format \"grep REGEX file.txt\"");
+				System.out.println("Invalid command: please use the format \"grep [-n NFA-file][-d DFA-file] REGEX file.txt\"");
 			}
 		}
 	}
