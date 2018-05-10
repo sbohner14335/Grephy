@@ -38,9 +38,9 @@ public class RegexReader {
 	// Output NFA / DFA in DOT format.
 	public void dotOutput(String automata) {
 		if (automata == "-n") {
-			// Print NFA to output file
+			// TODO: Print NFA to output file
 		} else if (automata == "-d") {
-			// Print DFA to output file.
+			// TODO: Print DFA to output file.
 		}
 	}
 	

@@ -14,7 +14,6 @@ public class NFA {
     public NFA(String regex) {
     	this.regex = regex;
     	this.states.add(START_STATE);  // Add the inital state to the list of states.
-    	this.acceptedStates.add(START_STATE);  // Add the inital state to the list of accepted states.
     	this.createNFA(regex);
     }
 
@@ -25,20 +24,18 @@ public class NFA {
 		int currState = START_STATE;
 		Boolean openParens = false;
 		String betweenParens = "";
-		String prevChar = ""; // Used to store the previous character.
+		String prevChar = "";
 		String nextChar = "";
 		for (int i = 1; i < regex.length()+1; i++) {
 			String currChar = regex.substring(i-1, i);
 			if (i != regex.length()) {
 				nextChar = regex.substring(i, i+1); // This is out of bounds on the last character, so we use this condition.
 			}
-			
-			System.out.println("Previous: " + prevChar + " Current- " + currChar + "  Next- " + nextChar);
-			
+						
 			if (currChar.equals(")")) {
 				betweenParens = "";
 				openParens = false;
-				createNFA(betweenParens);
+				//createNFA(betweenParens);
 			}
 			// Logic for determining whether we are inside parenthesis.
 			if (openParens) {
@@ -47,29 +44,67 @@ public class NFA {
 			} else if (currChar.equals("(")) {
 				openParens = true;
 			} else if (currChar.equals("*")) {
-				// TODO: Pass last character(s) as argument.
+				prevChar = currChar;
+				continue;  // Kleene star is handled when it is the nextChar not the current in the addTransition function, no actions needed.
 			} else if (currChar.equals("+")) {
-				// TODO: Create another state using "" transition.
-			} else {
-				this.states.add(++currState);  // Add another state to the set of states.
-				if (!nextChar.equals("*") || !nextChar.equals("+")) {
-				    HashMap<String, Integer> transition = new HashMap<String, Integer>();
-				    // Create a transition for this character to the next state and add the new transition to the delta function array list.
-					transition.put(currChar, currState);
-					// Assigns null (empty string) to all transitions that are undefined, as per an NFA.
-					for (int j = 0; j < this.alphabet.size(); j++) {
-						if (!transition.containsKey(this.alphabet.get(j))) {
-							transition.put(this.alphabet.get(j), null);
-						}
-					}
-					this.delta.add(transition);
-					// Clear the accepted states and add the most recent state created an accepted state.
-					this.acceptedStates.clear();
-					this.acceptedStates.add(currState);
-				}
+				// Map the previous character to the state as the next after the +.
+//				if (!nextChar.equals("(")) {
+//				    HashMap<String, Integer> transition = new HashMap<String, Integer>();
+//				    // Get the previous state's transistion's.
+//				    transition = this.delta.get(currState-1);
+//				    // Insert the new transition.
+//				    transition.put(nextChar, currState);
+//				    // Refresh the old transition with the both the old and the new.
+//				    this.delta.remove(currState-1);
+//				    this.delta.add(transition);
+//				}
+			} else {  // In this case the current character has to be part of the alphabet.
+				currState = addTransition(currState, prevChar, currChar, nextChar);
 			}
 			prevChar = currChar;
 		}
+	}
+	
+	/*
+	 * Adds a transition to the delta function for the current state.
+	 * @param currState - current state we are in
+	 * @param currChar - current character we are looking at in the regular expression.
+	 * @param nextChar - the next character we will be looking at in the regular expression.
+	 * @return int currState - current state after the computation.
+	 * 
+	 */
+	public int addTransition(int currState, String prevChar, String currChar, String nextChar) {
+		// Create a HashMap to interpret the transition for this current state.
+	    HashMap<String, Integer> transition = new HashMap<String, Integer>();
+		if (!(nextChar.equals("*") || nextChar.equals("+"))) {
+			this.states.add(++currState);  // Add another state to the set of states.
+			// Add new state to the list of accepted states.
+			this.acceptedStates.add(currState);
+		}
+	    // Create a transition for this character to the next state and add the new transition to the delta function array list.
+		if (prevChar.equals("*")) {
+			// Get the original transition, modify it then put it back into the delta list.
+			transition = this.delta.get(currState-1);
+			transition.put(currChar, currState);
+			this.delta.remove(currState-1);
+		} else {
+			transition.put(currChar, currState);
+		}
+		// Assigns null  to all transitions that are undefined, as per an NFA.
+		for (int j = 0; j < this.alphabet.size(); j++) {
+			if (!transition.containsKey(this.alphabet.get(j))) {
+				transition.put(this.alphabet.get(j), null);
+			}
+		}
+		// Add the set of transitions to the delta function (the index of the ArrayList represents a state for the delta functions).
+		this.delta.add(transition);
+		// Remove all previous accepted states.
+		for (int i = 0; i < this.acceptedStates.size(); i++) {
+			if (!this.acceptedStates.isEmpty() && this.acceptedStates.get(i) != currState) {
+				this.acceptedStates.remove(i);
+			}
+		}
+		return currState;
 	}
 	
 	// Learn the alphabet from a given regular expression.
@@ -77,7 +112,6 @@ public class NFA {
 		String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
 		// Loop through each character of the regex.
 		for (int i = 0; i < regexChars.length(); i++) {
-			// Determine if each character is contained within the line.
 			String character = regexChars.substring(i, i+1);
 			// Ensure the character is not already contained in the set.
 			if (!this.alphabet.contains(character)) {

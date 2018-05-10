@@ -29,7 +29,7 @@ public class DFA {
 		}
 	}
 	
-	// TODO: Test method
+	// Test method
 	public Boolean testLine(String line) {
 		int currState = START_STATE;
 		// Start at the initial state and loop through each character of the line.
