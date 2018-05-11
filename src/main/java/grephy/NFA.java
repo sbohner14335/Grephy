@@ -19,7 +19,7 @@ public class NFA {
 
 	// Constructs an NFA from a given regular expression.
 	public void createNFA(String regex) {
-		learnAlphabet();
+		learnRegexAlphabet();
 		// Loop through the regex string and interpret each character.
 		int currState = START_STATE;
 		Boolean openParens = false;
@@ -98,7 +98,7 @@ public class NFA {
 				transition.put(this.alphabet.get(j), null);
 			}
 		}
-		// Add the set of transitions to the delta function (the index of the ArrayList represents a state for the delta functions).
+		// Add the set of transitions to the delta function (the index of the ArrayList represents a state for the delta transitions).
 		this.delta.add(transition);
 		// Remove all previous accepted states.
 		for (int i = 0; i < this.acceptedStates.size(); i++) {
@@ -110,7 +110,7 @@ public class NFA {
 	}
 	
 	// Learn the alphabet from a given regular expression.
-	public void learnAlphabet() {
+	public void learnRegexAlphabet() {
 		String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
 		// Loop through each character of the regex.
 		for (int i = 0; i < regexChars.length(); i++) {

@@ -30,7 +30,7 @@ public class Grephy {
 					// Verify which automata is being specified, either NFA or DFA.
 					if (automata.toLowerCase().equals("-n") || automata.toLowerCase().equals("-d")) {
 						// Create an instantiation of the RegexReader object, passing through the filename, expression and the automata type specified.
-						RegexReader reader = new RegexReader(automata);
+						FileHandler reader = new FileHandler(automata);
 						reader.readFile(fileName, regex);
 					} else {
 						System.out.println("\"" + automata + "\"" + " is not a valid automata type.\nUse -n for NFA and -d for DFA.");
@@ -38,7 +38,7 @@ public class Grephy {
 				} else if (splited.length == 3) {
 					String regex = splited[1];
 					String fileName = splited[2];
-					RegexReader reader = new RegexReader(null);
+					FileHandler reader = new FileHandler(null);
 					reader.readFile(fileName, regex);
 				} else {
 					System.out.println("Invalid command: not enough arguments, please use the format \"grep [-n NFA-file][-d DFA-file] REGEX file.txt\"");
