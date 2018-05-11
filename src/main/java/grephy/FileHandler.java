@@ -3,6 +3,8 @@ package grephy;
 import java.io.*;
 import java.util.*;
 
+import org.omg.Messaging.SyncScopeHelper;
+
 public class FileHandler {
 	Scanner fileScanner;
     ArrayList<String> fileAlphabet = new ArrayList<String>();
@@ -63,18 +65,6 @@ public class FileHandler {
 	}
 	
 	/*
-	 * Output NFA / DFA in DOT format.
-	 * @param String automata - the DFA or NFA automata output specified.
-	 */
-	public void dotOutput(String automata) {
-		if (automata == "-n") {
-			// TODO: Print NFA to output file
-		} else if (automata == "-d") {
-			// TODO: Print DFA to output file.
-		}
-	}
-	
-	/*
 	 * Ensures that at least of the characters from the regex is on the line we are about to test.
 	 * @param String regex - the regular expression string from user input.
 	 */
@@ -82,7 +72,6 @@ public class FileHandler {
 		NFA nfa = new NFA(regex);
 		// Use this NFA to create a DFA.
 		DFA dfa = new DFA(nfa.states, nfa.alphabet, nfa.delta, nfa.acceptedStates);
-		dotOutput(this.automata);
 		// Test the line utilizing a test method (DFA).
 		while (fileScanner.hasNext()) {
 			String line = fileScanner.nextLine();

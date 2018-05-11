@@ -33,34 +33,10 @@ public class NFA {
 			if (i != regex.length()) {
 				nextChar = regex.substring(i, i+1);
 			}
-			
-			if (currChar.equals(")")) {
-				betweenParens = "";
-				openParens = false;
-				//createNFA(betweenParens);
-			}
-			// Logic for determining whether we are inside parenthesis.
-			if (openParens) {
-				betweenParens += currChar;  // Continue to build the string inside of the parens.
-			// Check if the next character is an open parens
-			} else if (currChar.equals("(")) {
-				openParens = true;
-			} else if (currChar.equals("*")) {
+			if (currChar.equals("*")) {
 				// Kleene star is handled when it is the nextChar in the addTransition function, no actions needed here.
 				prevChar = currChar;
-				continue;  
-			} else if (currChar.equals("+")) {
-				// Map the previous character to the state as the next after the +.
-//				if (!nextChar.equals("(")) {
-//				    HashMap<String, Integer> transition = new HashMap<String, Integer>();
-//				    // Get the previous state's transistion's.
-//				    transition = this.delta.get(currState-1);
-//				    // Insert the new transition.
-//				    transition.put(nextChar, currState);
-//				    // Refresh the old transition with the both the old and the new.
-//				    this.delta.remove(currState-1);
-//				    this.delta.add(transition);
-//				}
+				continue;
 			} else {  // In this case the current character has to be part of the alphabet.
 				currState = addTransition(currState, prevChar, currChar, nextChar);
 			}
@@ -99,6 +75,7 @@ public class NFA {
 				transition.put(this.alphabet.get(j), null);
 			}
 		}
+		transition.put("empty", null);
 		// Add the set of transitions to the delta function (the index of the ArrayList represents a state for the delta transitions).
 		this.delta.add(transition);
 		// Remove all previous accepted states.
