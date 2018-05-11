@@ -14,6 +14,7 @@ public class NFA {
     public NFA(String regex) {
     	this.regex = regex;
     	this.states.add(START_STATE);  // Add the inital state to the list of states.
+    	this.acceptedStates.add(START_STATE);
     	this.createNFA(regex);
     }
 

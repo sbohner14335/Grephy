@@ -19,7 +19,7 @@ public class FileHandler {
 	 */
 	public void readFile(String file, String regex) {
 		openFile(file);
-		learnFileAlphabet();
+		learnFileAlphabet(file);
 		validateFile(regex);
 		closeFile();
 	}
@@ -42,8 +42,8 @@ public class FileHandler {
 	 * Learns the alphabet of the given file.
 	 * @param String file - a given file.
 	 */
-	public void learnFileAlphabet() {
-		// If the file has contents, then read the lines.
+	public void learnFileAlphabet(String file) {
+		// If the file has contents.
 		if (fileScanner.hasNext()) {
 			while (fileScanner.hasNext()) {
 				String line = fileScanner.nextLine();
@@ -55,6 +55,8 @@ public class FileHandler {
 					}
 				}
 			}
+			// After the scanner is exhausted we must reconstruct it to refill the buffer.
+			openFile(file);
 		} else {
 			System.out.println("There is no content in this file to test.");
 		}
@@ -81,30 +83,11 @@ public class FileHandler {
 		// Use this NFA to create a DFA.
 		DFA dfa = new DFA(nfa.states, nfa.alphabet, nfa.delta, nfa.acceptedStates);
 		dotOutput(this.automata);
-		// If a character is found on a line, this becomes true.
-		Boolean charFound = false;
+		// Test the line utilizing a test method (DFA).
 		while (fileScanner.hasNext()) {
 			String line = fileScanner.nextLine();
-			// Get all REGEX characters that are not parens, + or kleene star.
-			String regexChars = regex.replaceAll("\\*", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\+", "");
-			// Loop through each character of the regex.
-			for (int i = 0; i < regexChars.length(); i++) {
-				// Determine if each character is contained within the line.
-				String character = regexChars.substring(i, i+1);
-				if (line.contains(character)) {
-					// If the character is found, we can test that line.
-					charFound = true;
-					break;
-				} else {
-					charFound = false;
-				}
-			}
-			// If characters matched on a given line, test that line.
-			if (charFound) {
-				// Test the line utilizing a test method (DFA).
-				if (dfa.testLine(line)) {
-					System.out.println(line);
-				}
+			if (dfa.testLine(line)) {
+				System.out.println(line);
 			}
 		}
 	}
