@@ -29,7 +29,10 @@ public class DFA {
 		}
 	}
 	
-	// Test method
+	/*
+	 * Test method
+	 * @param String line - the string of characters you are testing the DFA on.
+	 */
 	public Boolean testLine(String line) {
 		int currState = START_STATE;
 		// Start at the initial state and loop through each character of the line.
@@ -38,6 +41,8 @@ public class DFA {
 			// If the delta of the current state has a character that maps to another state, set the current state to the state it is mapped to.
 			if (delta.get(currState).containsKey(character)) {
 				currState = delta.get(currState).get(character);
+			} else if (delta.get(START_STATE).containsKey(character)) {
+				currState = delta.get(START_STATE).get(character);
 			} else {
 				currState = START_STATE;
 			}

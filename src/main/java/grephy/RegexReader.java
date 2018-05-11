@@ -35,7 +35,10 @@ public class RegexReader {
 		fileScanner.close();
 	}
 	
-	// Output NFA / DFA in DOT format.
+	/*
+	 * Output NFA / DFA in DOT format.
+	 * @param String automata - the DFA or NFA automata output specified.
+	 */
 	public void dotOutput(String automata) {
 		if (automata == "-n") {
 			// TODO: Print NFA to output file
@@ -44,7 +47,11 @@ public class RegexReader {
 		}
 	}
 	
-	// Ensures that at least of the characters from the regex is on the line we are about to test.
+	/*
+	 * Ensures that at least of the characters from the regex is on the line we are about to test.
+	 * @param String file - file we are using as an input.
+	 * @param String regex - the regular expression string from user input.
+	 */
 	public void validateLines(String file, String regex) {
 		if (fileScanner.hasNext()) {
 			NFA nfa = new NFA(regex);  // If the file has contents, create an NFA for the regular expression.

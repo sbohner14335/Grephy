@@ -28,10 +28,11 @@ public class NFA {
 		String nextChar = "";
 		for (int i = 1; i < regex.length()+1; i++) {
 			String currChar = regex.substring(i-1, i);
+			// This is out of bounds on the last character, so we use this condition.
 			if (i != regex.length()) {
-				nextChar = regex.substring(i, i+1); // This is out of bounds on the last character, so we use this condition.
+				nextChar = regex.substring(i, i+1);
 			}
-						
+			
 			if (currChar.equals(")")) {
 				betweenParens = "";
 				openParens = false;
@@ -44,8 +45,9 @@ public class NFA {
 			} else if (currChar.equals("(")) {
 				openParens = true;
 			} else if (currChar.equals("*")) {
+				// Kleene star is handled when it is the nextChar in the addTransition function, no actions needed here.
 				prevChar = currChar;
-				continue;  // Kleene star is handled when it is the nextChar not the current in the addTransition function, no actions needed.
+				continue;  
 			} else if (currChar.equals("+")) {
 				// Map the previous character to the state as the next after the +.
 //				if (!nextChar.equals("(")) {
